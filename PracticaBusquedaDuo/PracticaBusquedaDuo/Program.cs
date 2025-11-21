@@ -44,17 +44,43 @@ namespace PracticaBusquedaDuo
 
             return null;
         }
+        // Busca autores que contengan la palabra ingresada (Búsqueda lineal de respaldo)
+        public static List<Libro> BuscarSugerenciasAutor(List<Libro> libros, string termino)
+        {
+            List<Libro> sugerencias = new List<Libro>();
+
+            foreach (var libro in libros)
+            {
+                // Verificamos si el nombre del autor contiene el término (ignorando mayúsculas)
+                if (libro.Autor.IndexOf(termino, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    sugerencias.Add(libro);
+                }
+            }
+            return sugerencias;
+        }
         static void Main(string[] args)
         {
-            // Implementación de TU prueba
-            string autorBusqueda = "George Orwell";
-            Console.WriteLine($"\n--- Búsqueda Binaria por Autor: '{autorBusqueda}' ---");
+            //BÚSQUEDA BINARIA
 
-            // Ordenamos la lista (Requisito OBLIGATORIO para Búsqueda Binaria)
+            // 1. Pedir el dato al usuario
+            Console.Write("\nIngrese el nombre del Autor a buscar: ");
+            string autorBusqueda = Console.ReadLine();
+
+            Console.WriteLine($"\n--- Buscando autor: '{autorBusqueda}' ---");
+
+            // 2. Validar que no haya escrito nada vacío (opcional pero recomendado)
+            if (string.IsNullOrWhiteSpace(autorBusqueda))
+            {
+                Console.WriteLine("No ingresaste ningún nombre.");
+                return; // Termina la ejecución si está vacío
+            }
+
+            // 3. Ordenar la lista 
             List<Libro> bibliotecaOrdenada = biblioteca.OrderBy(x => x.Autor).ToList();
-
             Libro libroEncontrado = BuscarLibroPorAutorBinaria(bibliotecaOrdenada, autorBusqueda);
 
+            // 5. Mostrar resultados
             if (libroEncontrado != null)
             {
                 Console.WriteLine("¡Autor encontrado!");
@@ -62,7 +88,7 @@ namespace PracticaBusquedaDuo
             }
             else
             {
-                Console.WriteLine("El autor no se encuentra.");
+                Console.WriteLine("El autor no se encuentra en la biblioteca.");
             }
 
             Console.WriteLine("\nPresiona cualquier tecla para terminar...");
