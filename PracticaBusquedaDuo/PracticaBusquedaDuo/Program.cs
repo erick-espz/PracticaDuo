@@ -1,4 +1,4 @@
-﻿using PracticaBusquedaDuo.Clases;
+using PracticaBusquedaDuo.Clases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,20 +20,16 @@ namespace PracticaBusquedaDuo
             new Libro("Un mundo feliz", "Aldous Huxley", 1932, "Una novela distópica futurista que presenta una sociedad donde la gente es controlada por el condicionamiento y el consumo de drogas."),
             new Libro("Ensayo sobre la ceguera", "José Saramago", 1995, "La súbita epidemia de una 'ceguera blanca' obliga a la sociedad a replantearse los límites de la humanidad y la civilización.")
         };
-
+        // MÉTODO 1: Búsqueda Lineal por Título
         public static List<Libro> BuscarLibrosPorTituloLineal(List<Libro> libros, string tituloBuscado)
         {
             List<Libro> resultados = new List<Libro>();
-
-            // 1. Convertimos el término buscado a minúsculas una sola vez
-            string terminoMinusculas = tituloBuscado?.ToLower(); // El operador ? previene NullReferenceException si tituloBuscado es null
+            string terminoMinusculas = tituloBuscado?.ToLower(); 
 
             foreach (Libro libro in libros)
             {
-                
                 if (!string.IsNullOrEmpty(libro.Titulo) && !string.IsNullOrEmpty(terminoMinusculas))
                 {
-                    
                     if (libro.Titulo.ToLower().Contains(terminoMinusculas))
                     {
                         resultados.Add(libro);
@@ -43,29 +39,136 @@ namespace PracticaBusquedaDuo
             return resultados;
         }
 
-       
+        // MÉTODO 2: Búsqueda Binaria por Autor
+        public static Libro BuscarLibroPorAutorBinaria(List<Libro> libros, string autorBuscado)
+        {
+            int izquierda = 0;
+            int derecha = libros.Count - 1;
+
+            while (izquierda <= derecha)
+            {
+                int medio = (izquierda + derecha) / 2;
+                string autorMedio = libros[medio].Autor;
+
+                // Comparamos ignorando mayúsculas
+                int comparacion = string.Compare(autorMedio, autorBuscado, StringComparison.OrdinalIgnoreCase);
+
+                if (comparacion == 0) return libros[medio];
+                else if (comparacion < 0) izquierda = medio + 1;
+                else derecha = medio - 1;
+            }
+
+            return null;
+        }
+
+        // MÉTODO 3: Sugerencias de Autor
+        public static List<Libro> BuscarSugerenciasAutor(List<Libro> libros, string termino)
+        {
+            List<Libro> sugerencias = new List<Libro>();
+
+            foreach (var libro in libros)
+            {
+                if (libro.Autor.IndexOf(termino, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    sugerencias.Add(libro);
+                }
+            }
+            return sugerencias;
+        }
         static void Main(string[] args)
         {
-           //Busqueda lineal
-            string termino = "señor";
-            Console.WriteLine($"\n--- Búsqueda Lineal de Títulos que contienen: '{termino}' ---");
+            bool continuar = true;
 
-            List<Libro> resultados = BuscarLibrosPorTituloLineal(biblioteca, termino);
-
-            if (resultados.Count > 0)
+            while (continuar)
             {
-                Console.WriteLine("Sugerencias:");
-                Console.WriteLine($"Probablemente te refieres a: {resultados.Count}");
-                // Imprime cada libro usando el método ToString() de la clase Libro
-                resultados.ForEach(libro => Console.WriteLine($"   -> {libro}"));
-            }
-            else
-            {
-                Console.WriteLine("No se encontraron coincidencias.");
-            }
+                Console.Clear();
+                Console.WriteLine("=== BIBLIOTECA DIGITAL ===");
+                Console.WriteLine("1. Buscar libro por Título (Lineal)");
+                Console.WriteLine("2. Buscar libro por Autor (Binaria)");
+                Console.WriteLine("3. Salir");
+                Console.Write("\nSelecciona una opción: ");
+                string opcion = Console.ReadLine();
 
-            Console.WriteLine("\nPresiona cualquier tecla para terminar...");
-            Console.ReadKey();
+                switch (opcion)
+                {
+                    case "1":
+                        Console.Write("\nIngrese palabra clave del título: ");
+                        string terminoTitulo = Console.ReadLine();
+                        
+                        List<Libro> resultados = BuscarLibrosPorTituloLineal(biblioteca, terminoTitulo);
+
+                        if (resultados.Count > 0)
+                        {
+                            Console.WriteLine("Sugerencias:");
+                            Console.WriteLine($"Probablemente te refieres a: {resultados.Count}");
+                            // Imprime cada libro usando el método ToString() de la clase Libro
+                            resultados.ForEach(libro => Console.WriteLine($"   -> {libro}"));
+                        }
+                        else
+                        {
+                            Console.WriteLine("No se encontraron coincidencias.");
+                        }
+
+                        break;
+
+                    case "2":
+                        Console.Write("\nIngrese el nombre del Autor a buscar: ");
+                        string entradaUsuario = Console.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(entradaUsuario)) break;
+
+                        Console.WriteLine($"\n--- Buscando: '{entradaUsuario}' ---");
+
+                        // 1. Ordenar (Obligatorio para binaria)
+                        List<Libro> bibliotecaOrdenada = biblioteca.OrderBy(x => x.Autor).ToList();
+
+                        // 2. Búsqueda Exacta
+                        Libro libroEncontrado = BuscarLibroPorAutorBinaria(bibliotecaOrdenada, entradaUsuario);
+
+                        if (libroEncontrado != null)
+                        {
+                            Console.WriteLine("¡Autor encontrado exitosamente!");
+                            Console.WriteLine($"   -> {libroEncontrado}");
+                        }
+                        else
+                        {
+                            // 3. Sugerencias
+                            Console.WriteLine("No se encontró coincidencia exacta.");
+                            List<Libro> sugerencias = BuscarSugerenciasAutor(bibliotecaOrdenada, entradaUsuario);
+
+                            if (sugerencias.Count > 0)
+                            {
+                                Console.WriteLine("\n¿Te refieres a alguno de estos?");
+                                foreach (var sugerencia in sugerencias)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine($"   -> {sugerencia.Autor}");
+                                    Console.WriteLine($"      Libro: {sugerencia.Titulo}");
+                                    Console.ResetColor();
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("No hay resultados similares.");
+                            }
+                        }
+                        break;
+
+                    case "3":
+                        continuar = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Opción no válida.");
+                        break;
+                }
+
+                if (continuar)
+                {
+                    Console.WriteLine("\nPresiona cualquier tecla para continuar...");
+                    Console.ReadKey();
+                }
+            }
         }
     }
 }
