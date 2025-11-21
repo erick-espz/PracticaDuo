@@ -63,32 +63,49 @@ namespace PracticaBusquedaDuo
         {
             //BÚSQUEDA BINARIA
 
-            // 1. Pedir el dato al usuario
             Console.Write("\nIngrese el nombre del Autor a buscar: ");
-            string autorBusqueda = Console.ReadLine();
+            string entradaUsuario = Console.ReadLine();
 
-            Console.WriteLine($"\n--- Buscando autor: '{autorBusqueda}' ---");
+            // Validación básica
+            if (string.IsNullOrWhiteSpace(entradaUsuario)) { return; }
 
-            // 2. Validar que no haya escrito nada vacío (opcional pero recomendado)
-            if (string.IsNullOrWhiteSpace(autorBusqueda))
-            {
-                Console.WriteLine("No ingresaste ningún nombre.");
-                return; // Termina la ejecución si está vacío
-            }
+            Console.WriteLine($"\n--- Buscando: '{entradaUsuario}' ---");
 
-            // 3. Ordenar la lista 
+            // 1.Ordenar lista para Búsqueda Binaria
             List<Libro> bibliotecaOrdenada = biblioteca.OrderBy(x => x.Autor).ToList();
-            Libro libroEncontrado = BuscarLibroPorAutorBinaria(bibliotecaOrdenada, autorBusqueda);
 
-            // 5. Mostrar resultados
+            // 2.Búsqueda Binaria (Exacta)
+            Libro libroEncontrado = BuscarLibroPorAutorBinaria(bibliotecaOrdenada, entradaUsuario);
+
             if (libroEncontrado != null)
             {
-                Console.WriteLine("¡Autor encontrado!");
+                // Caso A: El usuario escribió el nombre exacto
+                Console.WriteLine("¡Autor encontrado exitosamente!");
                 Console.WriteLine($"   -> {libroEncontrado}");
             }
             else
             {
-                Console.WriteLine("El autor no se encuentra en la biblioteca.");
+                // Caso B: No es exacto, buscamos sugerencias parciales
+                Console.WriteLine("No se encontró una coincidencia exacta.");
+
+                List<Libro> sugerencias = BuscarSugerenciasAutor(bibliotecaOrdenada, entradaUsuario);
+
+                if (sugerencias.Count > 0)
+                {
+                    Console.WriteLine("\n¿Te refieres a alguno de estos?");
+                    foreach (var sugerencia in sugerencias)
+                    {
+
+                        Console.ForegroundColor = ConsoleColor.Cyan; // Un toque de color
+                        Console.WriteLine($"   -> {sugerencia.Autor}");
+                        Console.WriteLine($"      Libro: {sugerencia.Titulo}");
+                        Console.ResetColor();
+                  }
+                }
+                else
+                {
+                    Console.WriteLine("No hay resultados ni sugerencias similares.");
+                }
             }
 
             Console.WriteLine("\nPresiona cualquier tecla para terminar...");
