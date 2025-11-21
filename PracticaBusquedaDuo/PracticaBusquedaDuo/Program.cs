@@ -44,5 +44,29 @@ namespace PracticaBusquedaDuo
 
             return null;
         }
+        static void Main(string[] args)
+        {
+            // Implementación de TU prueba
+            string autorBusqueda = "George Orwell";
+            Console.WriteLine($"\n--- Búsqueda Binaria por Autor: '{autorBusqueda}' ---");
+
+            // Ordenamos la lista (Requisito OBLIGATORIO para Búsqueda Binaria)
+            List<Libro> bibliotecaOrdenada = biblioteca.OrderBy(x => x.Autor).ToList();
+
+            Libro libroEncontrado = BuscarLibroPorAutorBinaria(bibliotecaOrdenada, autorBusqueda);
+
+            if (libroEncontrado != null)
+            {
+                Console.WriteLine("¡Autor encontrado!");
+                Console.WriteLine($"   -> {libroEncontrado}");
+            }
+            else
+            {
+                Console.WriteLine("El autor no se encuentra.");
+            }
+
+            Console.WriteLine("\nPresiona cualquier tecla para terminar...");
+            Console.ReadKey();
+        }
     }
 }
