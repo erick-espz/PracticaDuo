@@ -96,7 +96,7 @@ namespace PracticaBusquedaDuo
                     foreach (var sugerencia in sugerencias)
                     {
 
-                        Console.ForegroundColor = ConsoleColor.Cyan; // Un toque de color
+                        Console.ForegroundColor = ConsoleColor.Cyan; // Un toque de colorr
                         Console.WriteLine($"   -> {sugerencia.Autor}");
                         Console.WriteLine($"      Libro: {sugerencia.Titulo}");
                         Console.ResetColor();
