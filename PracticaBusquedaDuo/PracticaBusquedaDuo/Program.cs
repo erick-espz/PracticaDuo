@@ -23,5 +23,26 @@ namespace PracticaBusquedaDuo
             new Libro("Un mundo feliz", "Aldous Huxley", 1932, "Una novela distópica futurista que presenta una sociedad donde la gente es controlada por el condicionamiento y el consumo de drogas."),
             new Libro("Ensayo sobre la ceguera", "José Saramago", 1995, "La súbita epidemia de una 'ceguera blanca' obliga a la sociedad a replantearse los límites de la humanidad y la civilización.")
         };
+        // Algoritmo de Búsqueda Binaria
+        public static Libro BuscarLibroPorAutorBinaria(List<Libro> libros, string autorBuscado)
+        {
+            int izquierda = 0;
+            int derecha = libros.Count - 1;
+
+            while (izquierda <= derecha)
+            {
+                int medio = (izquierda + derecha) / 2;
+                string autorMedio = libros[medio].Autor;
+
+                // Comparamos ignorando mayúsculas
+                int comparacion = string.Compare(autorMedio, autorBuscado, StringComparison.OrdinalIgnoreCase);
+
+                if (comparacion == 0) return libros[medio];
+                else if (comparacion < 0) izquierda = medio + 1;
+                else derecha = medio - 1;
+            }
+
+            return null;
+        }
     }
 }
