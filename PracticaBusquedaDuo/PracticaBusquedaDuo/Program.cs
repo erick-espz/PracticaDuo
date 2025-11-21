@@ -9,9 +9,6 @@ namespace PracticaBusquedaDuo
 {
     internal class Program
     {
-        // Copiamos la lista biblioteca EXACTAMENTE como la tiene tu compañero.
-        // Esto es necesario para que tu código compile y puedas probarlo.
-        // Al hacer el merge, Git intentará unificar esto.
         public static List<Libro> biblioteca = new List<Libro>
         {
             new Libro("Cien años de soledad", "Gabriel García Márquez", 1967, "La épica historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo."),
